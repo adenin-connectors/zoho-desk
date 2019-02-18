@@ -1,0 +1,36 @@
+ConnectorTitle: Zoho-Desk
+AccessCodeServiceEndpoint: https://accounts.zoho.com/oauth/v2/auth
+AccessTokenServiceEndpoint: https://accounts.zoho.com/oauth/v2/token
+ApiEndPoint: https://desk.zoho.com/api/v1
+UserName: hide
+UserPassword: hide
+ClientId: required
+ClientSecret: required
+AccessCodeServiceUrl: hide
+AccessTokenServiceUrl: hide
+Personalized: !!bool true
+ApiKey: hide
+ServiceUrl: hide
+ServiceUrlHint: ''
+XML2JSON: hide
+ImpersonateOAuth: required
+Interface: hide
+Custom1: hide
+Custom1Label: Custom Field 1
+Custom1Hint: ''
+Custom2: hide
+Custom2Label: Custom Field 2
+Custom3: hide
+Custom2Hint: ''
+Custom3Label: Custom Field 3
+Custom3Hint: ''
+Scopes:
+- ScopeName: Desk.basic.READ
+  ScopeDescription: Read Desk basic info.
+  IsDefault: false
+- ScopeName: Desk.settings.READ
+  ScopeDescription: Read Desk settings.
+  IsDefault: false
+- ScopeName: Desk.tickets.READ
+  ScopeDescription: Read Desk Tickets.
+  IsDefault: false
