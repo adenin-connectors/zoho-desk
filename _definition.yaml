@@ -1,7 +1,6 @@
 ConnectorTitle: Zoho-Desk
 AccessCodeServiceEndpoint: https://accounts.zoho.com/oauth/v2/auth
 AccessTokenServiceEndpoint: https://accounts.zoho.com/oauth/v2/token
-ApiEndPoint: https://desk.zoho.com/api/v1
 UserName: hide
 UserPassword: hide
 ClientId: required
