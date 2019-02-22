@@ -11,6 +11,7 @@ function api(path, opts) {
   if (typeof path !== 'string') {
     return Promise.reject(new TypeError(`Expected \`path\` to be a string, got ${typeof path}`));
   }
+
   opts = Object.assign({
     json: true,
     token: _activity.Context.connector.token,
@@ -22,19 +23,20 @@ function api(path, opts) {
     }
   }, opts);
 
-
   opts.headers = Object.assign({
     accept: 'application/json',
     'user-agent': 'adenin Now Assistant Connector, https://www.adenin.com/now-assistant'
   }, opts.headers);
+
   if (opts.token) {
     opts.headers.Authorization = `Zoho-oauthtoken ${opts.token}`;
   }
+
   if (typeof _orgId != 'undefined' && _orgId != null) {
     opts.headers.orgId = _orgId;
   }
-  const url = /^http(s)\:\/\/?/.test(path) && opts.endpoint ? path : opts.endpoint + path;
 
+  const url = /^http(s)\:\/\/?/.test(path) && opts.endpoint ? path : opts.endpoint + path;
   if (opts.stream) {
     return got.stream(url, opts);
   }
@@ -48,7 +50,7 @@ function api(path, opts) {
   });
 }
 // convert response from /issues endpoint to 
-api.convertIssues = function (response) {
+api.convertResponse = function (response) {
   let items = [];
   let data = response.body.data;
 
@@ -64,6 +66,7 @@ api.convertIssues = function (response) {
 //checks for the number of organisations and assigns id if there is exactly one organisation, throws error otherwise
 function getOrgId(organisations) {
   let orgData = organisations.body.data;
+  
   if (orgData.length != 1) {
     throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
   } else {

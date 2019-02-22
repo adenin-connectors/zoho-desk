@@ -7,7 +7,7 @@ module.exports = async function (activity) {
     const response = await api.getTickets();
 
     // convert response to items[]
-    activity.Response.Data = api.convertIssues(response);
+    activity.Response.Data = api.convertResponse(response);
 
   } catch (error) {
 
