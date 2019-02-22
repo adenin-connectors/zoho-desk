@@ -7,15 +7,11 @@ const api = require('./common/api');
 module.exports = async (activity) => {
   try {
     api.initialize(activity);
-
-    const orgRequestResponse = await api('/organizations');
-    api.getOrgId(orgRequestResponse);
-
-    const response = await api('/tickets?include=contacts,assignee,departments,team,isRead');
+    const response = await api.getTickets();
 
     let ticketStatus = {
       title: 'Open Tickets',
-      url: orgRequestResponse.body.data[0].portalURL,
+      url: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
       urlLabel: 'All tickets',
     };
 
@@ -23,6 +19,7 @@ module.exports = async (activity) => {
 
     if (noOfTickets != 0) {
       ticketStatus = {
+        ...ticketStatus,
         description: `You have ${noOfTickets} tickets assigned`,
         color: 'blue',
         value: noOfTickets,
@@ -30,6 +27,7 @@ module.exports = async (activity) => {
       }
     } else {
       ticketStatus = {
+        ...ticketStatus,
         description: `You have no tickets assigned`,
         actionable: false
       }

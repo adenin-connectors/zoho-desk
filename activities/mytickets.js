@@ -4,10 +4,7 @@ const api = require('./common/api');
 module.exports = async function (activity) {
   try {
     api.initialize(activity);
-    const orgRequestResponse = await api('/organizations');
-    api.getOrgId(orgRequestResponse);
-
-    const response = await api('/tickets?include=contacts,assignee,departments,team,isRead');
+    const response = await api.getTickets();
 
     // convert response to items[]
     activity.Response.Data = api.convertIssues(response);

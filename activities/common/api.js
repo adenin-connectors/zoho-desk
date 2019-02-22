@@ -62,12 +62,12 @@ api.convertIssues = function (response) {
   return { items: items };
 }
 //checks for the number of organisations and assigns id if there is exactly one organisation, throws error otherwise
-api.getOrgId = function (organisations) {
+function getOrgId(organisations) {
   let orgData = organisations.body.data;
   if (orgData.length != 1) {
     throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
   } else {
-    _orgId = orgData[0].id;
+    return orgData[0].id;
   }
 }
 const helpers = [
@@ -91,6 +91,13 @@ for (const x of helpers) {
   const method = x.toUpperCase();
   api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
   api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
+}
+
+api.getTickets = async function () {
+  let userProfile = await api('/organizations');
+  _orgId = getOrgId(userProfile);
+
+  return api('/tickets?include=contacts,assignee,departments,team,isRead');
 }
 
 module.exports = api;
