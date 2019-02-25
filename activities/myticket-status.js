@@ -20,7 +20,7 @@ module.exports = async (activity) => {
     if (noOfTickets != 0) {
       ticketStatus = {
         ...ticketStatus,
-        description: `You have ${noOfTickets} tickets assigned`,
+        description: `You have ${noOfTickets > 1 ? noOfTickets + " tickets" : noOfTickets + " ticket"} assigned`,
         color: 'blue',
         value: noOfTickets,
         actionable: true
