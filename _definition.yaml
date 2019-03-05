@@ -24,12 +24,12 @@ Custom2Hint: ''
 Custom3Label: Custom Field 3
 Custom3Hint: ''
 Scopes:
-- ScopeName: Desk.basic.READ
-  ScopeDescription: Read Desk basic info.
-  IsDefault: false
 - ScopeName: Desk.settings.READ
   ScopeDescription: Read Desk settings.
   IsDefault: false
 - ScopeName: Desk.tickets.READ
   ScopeDescription: Read Desk Tickets.
+  IsDefault: false
+- ScopeName: Desk.tickets.CREATE
+  ScopeDescription: Create Desk Tickets.
   IsDefault: false

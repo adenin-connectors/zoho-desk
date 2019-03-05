@@ -42,28 +42,10 @@ function api(path, opts) {
   }
 
   return got(url, opts).catch(err => {
-    if (err.statusCode == 401) {
-      err.response.statusCode = err.statusCode = 461;
-      err.message = err.message.replace('401', '461');
-    }
     throw err;
   });
 }
-// convert response from /issues endpoint to 
-api.convertResponse = function (response) {
-  let items = [];
-  let data = response.body.data;
 
-  // iterate through each issue and extract id, title, etc. into a new array
-  for (let i = 0; i < data.length; i++) {
-    let raw = data[i];
-    let item = { id: raw.id, title: raw.subject, description: raw.status, link: raw.webUrl, raw: raw }
-    items.push(item);
-  }
-
-  return { items: items };
-}
-//checks for the number of organisations and assigns id if there is exactly one organisation, throws error otherwise
 function getOrgId(organisations) {
   let orgData = organisations.body.data;
   
@@ -89,7 +71,7 @@ api.stream = (url, opts) => apigot(url, Object.assign({}, opts, {
 
 api.initialize = function (activity) {
   _activity = activity;
-}
+};
 for (const x of helpers) {
   const method = x.toUpperCase();
   api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
@@ -101,6 +83,6 @@ api.getTickets = async function () {
   _orgId = getOrgId(userProfile);
 
   return api('/tickets?include=contacts,assignee,departments,team,isRead');
-}
+};
 
 module.exports = api;
