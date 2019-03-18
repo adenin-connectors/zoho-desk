@@ -6,7 +6,9 @@ const api = require('./common/api');
 module.exports = async function (activity) {
   try {
     api.initialize(activity);
-    const response = await api.getTickets();
+    var pagination = cfActivity.pagination(activity);
+
+    const response = await api.getTickets(pagination);
     
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
@@ -24,7 +26,7 @@ function convertResponse (response) {
 
   for (let i = 0; i < data.length; i++) {
     let raw = data[i];
-    let item = { id: raw.id, title: raw.subject, description: raw.status, link: raw.webUrl, raw: raw }
+    let item = {count:data.length, id: raw.id, title: raw.subject, description: raw.status, link: raw.webUrl, raw: raw }
     items.push(item);
   }
 

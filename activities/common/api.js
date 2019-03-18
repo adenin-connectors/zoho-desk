@@ -48,7 +48,7 @@ function api(path, opts) {
 
 function getOrgId(organisations) {
   let orgData = organisations.body.data;
-  
+
   if (orgData.length != 1) {
     throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
   } else {
@@ -78,11 +78,19 @@ for (const x of helpers) {
   api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
-api.getTickets = async function () {
+api.getTickets = async function (pagination) {
   let userProfile = await api('/organizations');
   _orgId = getOrgId(userProfile);
 
-  return api('/tickets?include=contacts,assignee,departments,team,isRead');
+  let url = '/tickets?include=contacts,assignee,departments,team,isRead';
+
+  if (pagination) {
+    let pageSize = parseInt(pagination.pageSize);
+    let offset = parseInt(pagination.page) * pageSize;
+    url += `&from=${offset}&limit=${pageSize}`;
+  }
+
+  return api(url);
 };
 
 module.exports = api;
