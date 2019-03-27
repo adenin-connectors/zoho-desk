@@ -1,10 +1,8 @@
 'use strict';
 const got = require('got');
-const isPlainObj = require('is-plain-obj');
 const HttpAgent = require('agentkeepalive');
 const HttpsAgent = HttpAgent.HttpsAgent;
 
-let _activity = null;
 let _orgId = null;
 
 function api(path, opts) {
@@ -14,7 +12,7 @@ function api(path, opts) {
 
   opts = Object.assign({
     json: true,
-    token: _activity.Context.connector.token,
+    token: Activity.Context.connector.token,
     endpoint: 'https://desk.zoho.com/api/v1',
     orgId: _orgId,
     agent: {
@@ -69,9 +67,6 @@ api.stream = (url, opts) => apigot(url, Object.assign({}, opts, {
   stream: true
 }));
 
-api.initialize = function (activity) {
-  _activity = activity;
-};
 for (const x of helpers) {
   const method = x.toUpperCase();
   api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));

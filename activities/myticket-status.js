@@ -1,29 +1,27 @@
 'use strict';
-
-const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    api.initialize(activity);
     const response = await api.getTickets();
 
-    if (!cfActivity.isResponseOk(activity, response)) {
-      return;
-    }
+    if (Activity.isErrorResponse(response, [204])) return;
 
     let ticketStatus = {
-      title: 'Open Tickets',
-      url: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
-      urlLabel: 'All tickets',
+      title: T('Open Tickets'),
+      link: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
+      linkLabel: T('All Tickets')
     };
-
-    let noOfTickets = response.body.data.length;
+    
+    let noOfTickets = 0;
+    if (response.body.data) {
+      noOfTickets = response.body.data.length;
+    }
 
     if (noOfTickets != 0) {
       ticketStatus = {
         ...ticketStatus,
-        description: `You have ${noOfTickets > 1 ? noOfTickets + " tickets" : noOfTickets + " ticket"} assigned`,
+        description: noOfTickets > 1 ? T("You have {0} tickets.", noOfTickets) : T("You have 1 ticket."),
         color: 'blue',
         value: noOfTickets,
         actionable: true
@@ -31,14 +29,13 @@ module.exports = async (activity) => {
     } else {
       ticketStatus = {
         ...ticketStatus,
-        description: `You have no tickets assigned`,
+        description: T(`You have no tickets.`),
         actionable: false
       };
     }
 
     activity.Response.Data = ticketStatus;
-
   } catch (error) {
-    cfActivity.handleError(activity, error);
+    Activity.handleError(error);
   }
 };

@@ -1,24 +1,23 @@
 'use strict';
-
-const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    api.initialize(activity);
     const response = await api.getTickets();
 
-    if (!cfActivity.isResponseOk(activity, response)) {
-      return;
+    if (Activity.isErrorResponse(response, [204])) return;
+
+    var dateRange = Activity.dateRange("today");
+
+    let filteredTickets = [];
+    if (response.body.data) {
+      filteredTickets = filterTicketsByDateRange(response.body.data, dateRange);
     }
 
-    var dateRange = cfActivity.dateRange(activity, "today");
-    let filteredTickets = filterTicketsByDateRange(response.body.data, dateRange);
-
     let ticketStatus = {
-      title: 'New Tickets',
-      url: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
-      urlLabel: 'All tickets',
+      title: T('New Tickets'),
+      link: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
+      linkLabel: T('All Tickets')
     };
 
     let noOfTickets = filteredTickets.length;
@@ -26,7 +25,7 @@ module.exports = async (activity) => {
     if (noOfTickets != 0) {
       ticketStatus = {
         ...ticketStatus,
-        description: `You have ${noOfTickets > 1 ? noOfTickets + " new tickets" : noOfTickets + " new ticket"} assigned`,
+        description: noOfTickets > 1 ? T("You have {0} new tickets.", noOfTickets) : T("You have 1 new ticket."),
         color: 'blue',
         value: noOfTickets,
         actionable: true
@@ -34,14 +33,14 @@ module.exports = async (activity) => {
     } else {
       ticketStatus = {
         ...ticketStatus,
-        description: `You have no new tickets assigned`,
+        description: T(`You have no new tickets.`),
         actionable: false
       };
     }
 
     activity.Response.Data = ticketStatus;
   } catch (error) {
-    cfActivity.handleError(activity, error);
+    Activity.handleError(error);
   }
 };
 
