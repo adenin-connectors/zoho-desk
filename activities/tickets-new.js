@@ -5,7 +5,7 @@ module.exports = async (activity) => {
   try {
     const response = await api.getTickets();
 
-    if (Activity.isErrorResponse(response, [204])) return;
+    if (Activity.isErrorResponse(response, [200, 204])) return;
 
     var dateRange = Activity.dateRange("today");
 

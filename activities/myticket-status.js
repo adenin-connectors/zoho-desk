@@ -5,14 +5,14 @@ module.exports = async (activity) => {
   try {
     const response = await api.getTickets();
 
-    if (Activity.isErrorResponse(response, [204])) return;
+    if (Activity.isErrorResponse(response, [200, 204])) return;
 
     let ticketStatus = {
       title: T('Open Tickets'),
       link: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
       linkLabel: T('All Tickets')
     };
-    
+
     let noOfTickets = 0;
     if (response.body.data) {
       noOfTickets = response.body.data.length;

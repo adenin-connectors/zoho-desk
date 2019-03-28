@@ -7,7 +7,7 @@ module.exports = async function (activity) {
 
     const response = await api.getTickets(pagination);
 
-    if (Activity.isErrorResponse(response, [204])) return;
+    if (Activity.isErrorResponse(response, [200, 204])) return;
 
     activity.Response.Data = convertResponse(response);
   } catch (error) {
