@@ -33,3 +33,6 @@ Scopes:
 - ScopeName: Desk.tickets.CREATE
   ScopeDescription: Create Desk Tickets.
   IsDefault: false
+- ScopeName: Desk.search.READ
+  ScopeDescription: Search Desk Tickets.
+  IsDefault: false

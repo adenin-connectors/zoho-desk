@@ -77,13 +77,25 @@ api.getTickets = async function (pagination) {
   let userProfile = await api('/organizations');
   _orgId = getOrgId(userProfile);
 
-  let url = '/tickets?include=contacts,assignee,departments,team,isRead';
+  let url = '/tickets?include=contacts,assignee,departments,team,isRead&status=open';
 
   if (pagination) {
     let pageSize = parseInt(pagination.pageSize);
-    let offset = parseInt(pagination.page) * pageSize;
+    let offset = parseInt(pagination.page-1) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
+
+  return api(url);
+};
+
+api.getOverdueTickets = async function () {
+  let userProfile = await api('/organizations');
+  _orgId = getOrgId(userProfile);
+  let dateRange = Activity.dateRange("today");
+  let endDate = new Date(dateRange.startDate);
+
+  let url = `/tickets/search?modifiedTimeRange=${new Date(0).toISOString()},${endDate.toISOString()}`+
+  `&customerResponseTimeRange=${new Date(0).toISOString()},${endDate.toISOString()}&status=open`;
 
   return api(url);
 };

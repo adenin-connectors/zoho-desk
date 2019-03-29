@@ -7,5 +7,9 @@
   "New Tickets": "Novi Tiketi",
   "You have {0} new tickets.": "Imate {0} nova tiketa.",
   "You have 1 new ticket.": "Imate 1 novi tiket.",
-  "You have no new tickets.": "Nemate novih tiketa."
+  "You have no new tickets.": "Nemate novih tiketa.",
+  "Overdue Tickets": "Istekli Tiketi",
+  "You have overdue {0} tickets.": "Imate {0} istekla tiketa.",
+  "You have overdue 1 ticket.": "Imate 1 istekao tiket.",
+  "You have no overdue tickets.": "Nemate istekle tikete."
 }

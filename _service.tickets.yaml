@@ -1,4 +1,4 @@
-ServiceName: 'mytickets'
+ServiceName: 'tickets'
 InterfaceName: items
 Description: List Of Tickets
 APIDoc: ''
