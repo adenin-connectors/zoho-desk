@@ -11,5 +11,8 @@
   "Overdue Tickets": "Istekli Tiketi",
   "You have overdue {0} tickets.": "Imate {0} istekla tiketa.",
   "You have overdue 1 ticket.": "Imate 1 istekao tiket.",
-  "You have no overdue tickets.": "Nemate istekle tikete."
+  "You have no overdue tickets.": "Nemate istekle tikete.",
+  "Create Zohodesk Ticket": "Kreiraj Zohodesk Tiket",
+  "Create Ticket": "Kreiraj Tiket",
+  "Ticket {0} created.": "Tiket {0} je kreiran."
 }

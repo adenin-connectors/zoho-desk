@@ -13,10 +13,10 @@ module.exports = async (activity) => {
     if (response.body.data) {
       filteredTickets = filterTicketsByDateRange(response.body.data, dateRange);
     }
-
+    let userDesk = Activity.Context.connector.custom1;
     let ticketStatus = {
       title: T('New Tickets'),
-      link: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
+      link: `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`,
       linkLabel: T('All Tickets')
     };
 

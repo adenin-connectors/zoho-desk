@@ -6,10 +6,11 @@ module.exports = async (activity) => {
     const response = await api.getTickets();
 
     if (Activity.isErrorResponse(response, [200, 204])) return;
-
+    
+    let userDesk = Activity.Context.connector.custom1;
     let ticketStatus = {
       title: T('Open Tickets'),
-      link: 'https://desk.zoho.com/support/devhome/ShowHomePage.do#Cases',
+      link: `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`,
       linkLabel: T('All Tickets')
     };
 

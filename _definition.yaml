@@ -14,9 +14,9 @@ ServiceUrlHint: ''
 XML2JSON: hide
 ImpersonateOAuth: required
 Interface: hide
-Custom1: hide
-Custom1Label: Custom Field 1
-Custom1Hint: ''
+Custom1: required
+Custom1Label: Zendesk Domain
+Custom1Hint: 'yourcompany'
 Custom2: hide
 Custom2Label: Custom Field 2
 Custom3: hide

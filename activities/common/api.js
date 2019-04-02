@@ -23,7 +23,7 @@ function api(path, opts) {
 
   opts.headers = Object.assign({
     accept: 'application/json',
-    'user-agent': 'adenin Now Assistant Connector, https://www.adenin.com/now-assistant'
+    'user-agent': 'adenin Digital Assistant Connector, https://www.adenin.com/digital-assistant'
   }, opts.headers);
 
   if (opts.token) {
@@ -73,29 +73,21 @@ for (const x of helpers) {
   api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
-api.getTickets = async function (pagination) {
+api.initOrgId = async function () {
   let userProfile = await api('/organizations');
   _orgId = getOrgId(userProfile);
+};
+
+api.getTickets = async function (pagination) {
+  await api.initOrgId();
 
   let url = '/tickets?include=contacts,assignee,departments,team,isRead&status=open';
 
   if (pagination) {
     let pageSize = parseInt(pagination.pageSize);
-    let offset = parseInt(pagination.page-1) * pageSize;
+    let offset = parseInt(pagination.page) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
-
-  return api(url);
-};
-
-api.getOverdueTickets = async function () {
-  let userProfile = await api('/organizations');
-  _orgId = getOrgId(userProfile);
-  let dateRange = Activity.dateRange("today");
-  let endDate = new Date(dateRange.startDate);
-
-  let url = `/tickets/search?modifiedTimeRange=${new Date(0).toISOString()},${endDate.toISOString()}`+
-  `&customerResponseTimeRange=${new Date(0).toISOString()},${endDate.toISOString()}&status=open`;
 
   return api(url);
 };
