@@ -30,7 +30,7 @@ function api(path, opts) {
     opts.headers.Authorization = `Zoho-oauthtoken ${opts.token}`;
   }
 
-  if (typeof _orgId != 'undefined' && _orgId != null) {
+  if (typeof _orgId !== 'undefined' && _orgId !== null) {
     opts.headers.orgId = _orgId;
   }
 
@@ -39,15 +39,15 @@ function api(path, opts) {
     return got.stream(url, opts);
   }
 
-  return got(url, opts).catch(err => {
+  return got(url, opts).catch((err) => {
     throw err;
   });
 }
 
 function getOrgId(organisations) {
-  let orgData = organisations.body.data;
+  const orgData = organisations.body.data;
 
-  if (orgData.length != 1) {
+  if (orgData.length !== 1) {
     throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
   } else {
     return orgData[0].id;
@@ -62,19 +62,19 @@ const helpers = [
   'delete'
 ];
 
-api.stream = (url, opts) => apigot(url, Object.assign({}, opts, {
+api.stream = (url, opts) => got(url, Object.assign({}, opts, {
   json: false,
   stream: true
 }));
 
 for (const x of helpers) {
   const method = x.toUpperCase();
-  api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
-  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
+  api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
+  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
 }
 
 api.initOrgId = async function () {
-  let userProfile = await api('/organizations');
+  const userProfile = await api('/organizations');
   _orgId = getOrgId(userProfile);
 };
 
@@ -84,8 +84,8 @@ api.getTickets = async function (pagination) {
   let url = '/tickets?include=contacts,assignee,departments,team,isRead&status=open';
 
   if (pagination) {
-    let pageSize = parseInt(pagination.pageSize);
-    let offset = parseInt(pagination.page) * pageSize;
+    const pageSize = parseInt(pagination.pageSize, 10);
+    const offset = parseInt(pagination.page, 10) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
 
