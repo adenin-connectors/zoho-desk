@@ -15,7 +15,7 @@ XML2JSON: hide
 ImpersonateOAuth: required
 Interface: hide
 Custom1: required
-Custom1Label: Zendesk Domain
+Custom1Label: Zohodesk Domain
 Custom1Hint: 'yourcompany'
 Custom2: hide
 Custom2Label: Custom Field 2

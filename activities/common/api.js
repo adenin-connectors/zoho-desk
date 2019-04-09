@@ -69,12 +69,13 @@ api.stream = (url, opts) => got(url, Object.assign({}, opts, {
 
 for (const x of helpers) {
   const method = x.toUpperCase();
-  api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
-  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
+  api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
+  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
 api.initOrgId = async function () {
   const userProfile = await api('/organizations');
+  if (Activity.isErrorResponse(userProfile, [200, 204])) return;
   _orgId = getOrgId(userProfile);
 };
 
@@ -85,11 +86,27 @@ api.getTickets = async function (pagination) {
 
   if (pagination) {
     const pageSize = parseInt(pagination.pageSize, 10);
-    const offset = parseInt(pagination.page, 10) * pageSize;
+    const offset = parseInt(pagination.page) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
 
   return api(url);
 };
 
+//**maps response data to items */
+api.convertResponse = function (response) {
+  let items = [];
+  let data = [];
+  if (response.body.data) {
+    data = response.body.data;
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    let raw = data[i];
+    let item = { count: data.length, id: raw.id, title: raw.subject, description: raw.status, link: raw.webUrl, raw: raw }
+    items.push(item);
+  }
+
+  return { items: items };
+}
 module.exports = api;
