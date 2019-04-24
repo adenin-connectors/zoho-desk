@@ -3,8 +3,8 @@ const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    api.initOrgId();
-    let dateRange = Activity.dateRange("today");
+    api.initialize(activity);
+    let dateRange = $.dateRange(activity,"today");
     let endDate = new Date(dateRange.startDate);
     await api.initOrgId();
 
@@ -13,13 +13,13 @@ module.exports = async (activity) => {
       `&customerResponseTimeRange=${new Date(0).toISOString()},${endDate.toISOString()}&status=open`;
     const response = await api(url);
 
-    if (Activity.isErrorResponse(response, [200, 204])) return;
+    if ($.isErrorResponse(activity,response, [200, 204])) return;
 
-    let userDesk = Activity.Context.connector.custom1;
+    let userDesk = activity.Context.connector.custom1;
     let ticketStatus = {
-      title: T('Overdue Tickets'),
+      title: T(activity,'Overdue Tickets'),
       link: `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`,
-      linkLabel: T('All Tickets')
+      linkLabel: T(activity,'All Tickets')
     };
 
     let noOfTickets = 0;
@@ -30,7 +30,7 @@ module.exports = async (activity) => {
     if (noOfTickets != 0) {
       ticketStatus = {
         ...ticketStatus,
-        description: noOfTickets > 1 ? T("You have overdue {0} tickets.", noOfTickets) : T("You have overdue 1 ticket."),
+        description: noOfTickets > 1 ? T(activity,"You have overdue {0} tickets.", noOfTickets) : T(activity,"You have overdue 1 ticket."),
         color: 'blue',
         value: noOfTickets,
         actionable: true
@@ -38,13 +38,13 @@ module.exports = async (activity) => {
     } else {
       ticketStatus = {
         ...ticketStatus,
-        description: T(`You have no overdue tickets.`),
+        description: T(activity,`You have no overdue tickets.`),
         actionable: false
       };
     }
 
     activity.Response.Data = ticketStatus;
   } catch (error) {
-    Activity.handleError(error);
+    $.handleError(activity,error);
   }
 };

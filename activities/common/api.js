@@ -4,6 +4,7 @@ const HttpAgent = require('agentkeepalive');
 const HttpsAgent = HttpAgent.HttpsAgent;
 
 let _orgId = null;
+let _activity = null;
 
 function api(path, opts) {
   if (typeof path !== 'string') {
@@ -12,7 +13,7 @@ function api(path, opts) {
 
   opts = Object.assign({
     json: true,
-    token: Activity.Context.connector.token,
+    token: _activity.Context.connector.token,
     endpoint: 'https://desk.zoho.com/api/v1',
     orgId: _orgId,
     agent: {
@@ -26,18 +27,13 @@ function api(path, opts) {
     'user-agent': 'adenin Digital Assistant Connector, https://www.adenin.com/digital-assistant'
   }, opts.headers);
 
-  if (opts.token) {
-    opts.headers.Authorization = `Zoho-oauthtoken ${opts.token}`;
-  }
+  if (opts.token) opts.headers.Authorization = `Zoho-oauthtoken ${opts.token}`;
 
-  if (typeof _orgId !== 'undefined' && _orgId !== null) {
-    opts.headers.orgId = _orgId;
-  }
+  if (_orgId) opts.headers.orgId = _orgId;
 
   const url = /^http(s)\:\/\/?/.test(path) && opts.endpoint ? path : opts.endpoint + path;
-  if (opts.stream) {
-    return got.stream(url, opts);
-  }
+
+  if (opts.stream) return got.stream(url, opts);
 
   return got(url, opts).catch((err) => {
     throw err;
@@ -62,6 +58,10 @@ const helpers = [
   'delete'
 ];
 
+api.initialize = (activity) => {
+  _activity = activity;
+};
+
 api.stream = (url, opts) => got(url, Object.assign({}, opts, {
   json: false,
   stream: true
@@ -75,7 +75,7 @@ for (const x of helpers) {
 
 api.initOrgId = async function () {
   const userProfile = await api('/organizations');
-  if (Activity.isErrorResponse(userProfile, [200, 204])) return;
+  if ($.isErrorResponse(_activity, userProfile, [200, 204])) return;
   _orgId = getOrgId(userProfile);
 };
 

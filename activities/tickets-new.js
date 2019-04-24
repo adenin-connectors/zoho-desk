@@ -3,21 +3,22 @@ const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
+    api.initialize(activity);
     const response = await api.getTickets();
 
-    if (Activity.isErrorResponse(response, [200, 204])) return;
+    if ($.isErrorResponse(activity, response, [200, 204])) return;
 
-    var dateRange = Activity.dateRange("today");
+    var dateRange = $.dateRange(activity, "today");
 
     let filteredTickets = [];
     if (response.body.data) {
       filteredTickets = filterTicketsByDateRange(response.body.data, dateRange);
     }
-    let userDesk = Activity.Context.connector.custom1;
+    let userDesk = activity.Context.connector.custom1;
     let ticketStatus = {
-      title: T('New Tickets'),
+      title: T(activity, 'New Tickets'),
       link: `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`,
-      linkLabel: T('All Tickets')
+      linkLabel: T(activity, 'All Tickets')
     };
 
     let noOfTickets = filteredTickets.length;
@@ -25,7 +26,7 @@ module.exports = async (activity) => {
     if (noOfTickets != 0) {
       ticketStatus = {
         ...ticketStatus,
-        description: noOfTickets > 1 ? T("You have {0} new tickets.", noOfTickets) : T("You have 1 new ticket."),
+        description: noOfTickets > 1 ? T(activity, "You have {0} new tickets.", noOfTickets) : T(activity, "You have 1 new ticket."),
         color: 'blue',
         value: noOfTickets,
         actionable: true
@@ -33,14 +34,14 @@ module.exports = async (activity) => {
     } else {
       ticketStatus = {
         ...ticketStatus,
-        description: T(`You have no new tickets.`),
+        description: T(activity, `You have no new tickets.`),
         actionable: false
       };
     }
 
     activity.Response.Data = ticketStatus;
   } catch (error) {
-    Activity.handleError(error);
+    $.handleError(activity, error);
   }
 };
 
