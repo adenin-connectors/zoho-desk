@@ -4,6 +4,7 @@ const HttpAgent = require('agentkeepalive');
 const HttpsAgent = HttpAgent.HttpsAgent;
 
 let _orgId = null;
+let _activity = null;
 
 function api(path, opts) {
   if (typeof path !== 'string') {
@@ -12,7 +13,7 @@ function api(path, opts) {
 
   opts = Object.assign({
     json: true,
-    token: Activity.Context.connector.token,
+    token: _activity.Context.connector.token,
     endpoint: 'https://desk.zoho.com/api/v1',
     orgId: _orgId,
     agent: {
@@ -26,18 +27,13 @@ function api(path, opts) {
     'user-agent': 'adenin Digital Assistant Connector, https://www.adenin.com/digital-assistant'
   }, opts.headers);
 
-  if (opts.token) {
-    opts.headers.Authorization = `Zoho-oauthtoken ${opts.token}`;
-  }
+  if (opts.token) opts.headers.Authorization = `Zoho-oauthtoken ${opts.token}`;
 
-  if (typeof _orgId !== 'undefined' && _orgId !== null) {
-    opts.headers.orgId = _orgId;
-  }
+  if (_orgId) opts.headers.orgId = _orgId;
 
   const url = /^http(s)\:\/\/?/.test(path) && opts.endpoint ? path : opts.endpoint + path;
-  if (opts.stream) {
-    return got.stream(url, opts);
-  }
+
+  if (opts.stream) return got.stream(url, opts);
 
   return got(url, opts).catch((err) => {
     throw err;
@@ -62,6 +58,10 @@ const helpers = [
   'delete'
 ];
 
+api.initialize = (activity) => {
+  _activity = activity;
+};
+
 api.stream = (url, opts) => got(url, Object.assign({}, opts, {
   json: false,
   stream: true
@@ -69,12 +69,13 @@ api.stream = (url, opts) => got(url, Object.assign({}, opts, {
 
 for (const x of helpers) {
   const method = x.toUpperCase();
-  api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
-  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
+  api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
+  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
 api.initOrgId = async function () {
   const userProfile = await api('/organizations');
+  if ($.isErrorResponse(_activity, userProfile, [200, 204])) return;
   _orgId = getOrgId(userProfile);
 };
 
@@ -85,11 +86,27 @@ api.getTickets = async function (pagination) {
 
   if (pagination) {
     const pageSize = parseInt(pagination.pageSize, 10);
-    const offset = parseInt(pagination.page, 10) * pageSize;
+    const offset = parseInt(pagination.page) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
 
   return api(url);
 };
 
+//**maps response data to items */
+api.convertResponse = function (response) {
+  let items = [];
+  let data = [];
+  if (response.body.data) {
+    data = response.body.data;
+  }
+
+  for (let i = 0; i < data.length; i++) {
+    let raw = data[i];
+    let item = { count: data.length, id: raw.id, title: raw.subject, description: raw.status, link: raw.webUrl, raw: raw }
+    items.push(item);
+  }
+
+  return { items: items };
+}
 module.exports = api;

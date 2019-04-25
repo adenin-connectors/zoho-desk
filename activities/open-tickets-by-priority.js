@@ -3,13 +3,14 @@ const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
+    api.initialize(activity);
     const response = await api.getTickets();
 
-    if (Activity.isErrorResponse(response, [200, 204])) return;
+    if ($.isErrorResponse(activity, response, [200, 204])) return;
 
     activity.Response.Data = mapResponseToChartData(response);
   } catch (error) {
-    Activity.handleError(error);
+    $.handleError(activity, error);
   }
 };
 //** maps response data to data format usable by chart */
@@ -49,8 +50,7 @@ function mapResponseToChartData(response) {
           }
         }
       },
-      template: 'bar',
-      palette: 'office.Office6'
+      template: 'pie',
     },
     _settings: {}
   };
