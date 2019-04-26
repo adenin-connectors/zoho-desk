@@ -129,5 +129,37 @@ api.convertResponse = function (response) {
   }
 
   return { items };
-}
+};
+
+//**filters response based on provided dateRange */
+api.filterResponseByDateRange = function (response, dateRange) {
+  let items = [];
+  let data = [];
+  if (response.body.data) {
+    data = response.body.data;
+  }
+  let timeMin = new Date(dateRange.startDate).valueOf();
+  let timeMax = new Date(dateRange.endDate).valueOf();
+
+  for (let i = 0; i < data.length; i++) {
+    let createTime = new Date(data[i].createdTime).valueOf();
+
+    if (createTime > timeMin && createTime < timeMax) {
+      let raw = data[i];
+      let item = {
+        id: raw.id,
+        title: raw.subject,
+        description: raw.status,
+        date: raw.createdTime,
+        link: raw.webUrl,
+        raw: raw
+      };
+
+      items.push(item);
+    }
+  }
+
+  return items;
+};
+
 module.exports = api;

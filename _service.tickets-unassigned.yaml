@@ -1,0 +1,7 @@
+InterfaceName: items
+Description: List Of Tickets
+APIDoc: ''
+Interfaces: 'pagination'
+RequiredScopes: ''
+AdditionalParameters:
+Method: ''
