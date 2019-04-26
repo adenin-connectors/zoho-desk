@@ -16,34 +16,34 @@ module.exports = async (activity) => {
     if ($.isErrorResponse(activity,response, [200, 204])) return;
 
     let userDesk = activity.Context.connector.custom1;
-    let ticketStatus = {
+    let status = {
       title: T(activity,'Overdue Tickets'),
       link: `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`,
       linkLabel: T(activity,'All Tickets')
     };
 
-    let noOfTickets = 0;
+    let value = 0;
     if (response.body.data) {
-      noOfTickets = response.body.data.length;
+      value = response.body.data.length;
     }
 
-    if (noOfTickets != 0) {
-      ticketStatus = {
-        ...ticketStatus,
-        description: noOfTickets > 1 ? T(activity,"You have overdue {0} tickets.", noOfTickets) : T(activity,"You have overdue 1 ticket."),
+    if (value != 0) {
+      status = {
+        ...status,
+        description: value > 1 ? T(activity,"You have overdue {0} tickets.", value) : T(activity,"You have overdue 1 ticket."),
         color: 'blue',
-        value: noOfTickets,
+        value: value,
         actionable: true
       };
     } else {
-      ticketStatus = {
-        ...ticketStatus,
+      status = {
+        ...status,
         description: T(activity,`You have no overdue tickets.`),
         actionable: false
       };
     }
 
-    activity.Response.Data = ticketStatus;
+    activity.Response.Data = status;
   } catch (error) {
     $.handleError(activity,error);
   }

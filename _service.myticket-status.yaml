@@ -1,8 +1,7 @@
-ServiceName: 'tickets-new'
 InterfaceName: 'status'
-Description: 'New Tickets'
+Description: 'My Ticket Status'
 APIDoc: ''
-Interfaces: 'daterange'
+Interfaces: ''
 RequiredScopes: ''
 AdditionalParameters:
 Method: ''

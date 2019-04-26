@@ -1,7 +1,7 @@
 InterfaceName: 'status'
-Description: 'Ticket Status'
+Description: 'My Recent Tickets'
 APIDoc: ''
-Interfaces: ''
+Interfaces: 'daterange'
 RequiredScopes: ''
 AdditionalParameters:
 Method: ''

@@ -1,4 +1,3 @@
-ServiceName: 'overdueticket-status'
 InterfaceName: 'items'
 Description: 'overdueticket-status'
 APIDoc: ''

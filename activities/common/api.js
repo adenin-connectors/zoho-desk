@@ -40,15 +40,6 @@ function api(path, opts) {
   });
 }
 
-function getOrgId(organisations) {
-  const orgData = organisations.body.data;
-
-  if (orgData.length !== 1) {
-    throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
-  } else {
-    return orgData[0].id;
-  }
-}
 const helpers = [
   'get',
   'post',
@@ -73,24 +64,47 @@ for (const x of helpers) {
   api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
+//** sends request to the api to get zoho organizations */
 api.initOrgId = async function () {
-  const userProfile = await api('/organizations');
-  if ($.isErrorResponse(_activity, userProfile, [200, 204])) return;
-  _orgId = getOrgId(userProfile);
+  const userOrg = await api('/organizations');
+  if ($.isErrorResponse(_activity, userOrg, [200, 204])) return;
+
+  const orgData = userOrg.body.data;
+
+  if (orgData.length !== 1) {
+    throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
+  } else {
+    _orgId = orgData[0].id;
+  }
 };
 
-api.getTickets = async function (pagination) {
-  await api.initOrgId();
+//** retrieves tickets, if no assigneeId is passed returns all tickets */
+api.getTickets = async function (pagination, assigneeId) {
+  if (!_orgId) {
+    await api.initOrgId();
+  }
 
   let url = '/tickets?include=contacts,assignee,departments,team,isRead&status=open';
 
   if (pagination) {
     const pageSize = parseInt(pagination.pageSize, 10);
-    const offset = parseInt(pagination.page) * pageSize;
+    const offset = (parseInt(pagination.page) - 1) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
 
+  if (assigneeId) {
+    url += `&assignee=${assigneeId}`;
+  }
+
   return api(url);
+};
+
+api.getCurrentUserId = async function () {
+  await api.initOrgId();
+  const userProfile = await api('/myinfo?include=profile');
+  if ($.isErrorResponse(_activity, userProfile, [200, 204])) return;
+
+  return userProfile.body.id;
 };
 
 //**maps response data to items */
@@ -103,10 +117,49 @@ api.convertResponse = function (response) {
 
   for (let i = 0; i < data.length; i++) {
     let raw = data[i];
-    let item = { count: data.length, id: raw.id, title: raw.subject, description: raw.status, link: raw.webUrl, raw: raw }
+    let item = {
+      id: raw.id,
+      title: raw.subject,
+      description: raw.status,
+      date: raw.createdTime,
+      link: raw.webUrl,
+      raw: raw
+    };
     items.push(item);
   }
 
-  return { items: items };
-}
+  return { items };
+};
+
+//**filters response based on provided dateRange */
+api.filterResponseByDateRange = function (response, dateRange) {
+  let items = [];
+  let data = [];
+  if (response.body.data) {
+    data = response.body.data;
+  }
+  let timeMin = new Date(dateRange.startDate).valueOf();
+  let timeMax = new Date(dateRange.endDate).valueOf();
+
+  for (let i = 0; i < data.length; i++) {
+    let createTime = new Date(data[i].createdTime).valueOf();
+
+    if (createTime > timeMin && createTime < timeMax) {
+      let raw = data[i];
+      let item = {
+        id: raw.id,
+        title: raw.subject,
+        description: raw.status,
+        date: raw.createdTime,
+        link: raw.webUrl,
+        raw: raw
+      };
+
+      items.push(item);
+    }
+  }
+
+  return items;
+};
+
 module.exports = api;
