@@ -13,7 +13,7 @@ module.exports = async function (activity) {
 
     var pagination = $.pagination(activity);
     const pageSize = parseInt(pagination.pageSize, 10);
-    const offset = parseInt(pagination.page-1) * pageSize;
+    const offset = parseInt(pagination.page - 1) * pageSize;
 
     let dateRange = $.dateRange(activity, "today");
     let startDate = new Date(dateRange.startDate);
@@ -28,7 +28,12 @@ module.exports = async function (activity) {
     const response = await api(url);
     if ($.isErrorResponse(activity, response, [200, 204])) return;
 
-    activity.Response.Data = api.convertResponse(response);
+    let userDesk = activity.Context.connector.custom1;
+
+    activity.Response.Data.items = api.convertResponse(response);
+    activity.Response.Data.title = T(activity, 'Open Tickets');
+    activity.Response.Data.link = `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`;
+    activity.Response.Data.linkLabel = T(activity, 'All Tickets');
   } catch (error) {
     $.handleError(activity, error);
   }

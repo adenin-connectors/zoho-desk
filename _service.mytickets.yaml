@@ -1,7 +1,7 @@
 InterfaceName: items
-Description: Search Tickets
+Description: List Of Assigned Tickets
 APIDoc: ''
-Interfaces: 'search,pagination,daterange'
+Interfaces: 'pagination'
 RequiredScopes: ''
 AdditionalParameters:
 Method: ''

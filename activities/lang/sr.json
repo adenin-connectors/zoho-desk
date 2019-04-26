@@ -14,5 +14,13 @@
   "You have no overdue tickets.": "Nemate istekle tikete.",
   "Create Zohodesk Ticket": "Kreiraj Zohodesk Tiket",
   "Create Ticket": "Kreiraj Tiket",
-  "Ticket {0} created.": "Tiket {0} je kreiran."
+  "Ticket {0} created.": "Tiket {0} je kreiran.",
+  "My Open Tickets": "Moji Otvoreni Tiketi",
+  "You have {0} tickets assigned.": "Imate {0} dodeljena tiketa.",
+  "You have 1 ticket asigned.": "Imate 1 dodeljen tiket.",
+  "You have no tickets assigned." : "Nemate dodeljene tikete.",
+  "My New Tickets" : "Moji Novi Tiketi",
+  "You have {0} new tickets assigned." : "Imate {0} nova dodeljena tiketa.",
+  "You have 1 new ticket assigned." : "Imate 1 novi dodeljen tiket.",
+  "You have no new tickets assigned.": "Nemate novih dodeljenih tiketa."
 }
