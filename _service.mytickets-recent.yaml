@@ -1,4 +1,4 @@
-InterfaceName: 'status'
+InterfaceName: 'items'
 Description: 'My Recent Tickets'
 APIDoc: ''
 Interfaces: 'daterange'
