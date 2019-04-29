@@ -36,3 +36,7 @@ Scopes:
 - ScopeName: Desk.search.READ
   ScopeDescription: Search Desk Tickets.
   IsDefault: false
+- ScopeName: Desk.contacts.READ
+  ScopeDescription: Read Desk Contacts.
+  IsDefault: false
+  

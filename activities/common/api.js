@@ -66,6 +66,9 @@ for (const x of helpers) {
 
 //** sends request to the api to get zoho organizations */
 api.initOrgId = async function () {
+  if (_orgId) {
+    return;
+  }
   const userOrg = await api('/organizations');
   if ($.isErrorResponse(_activity, userOrg, [200, 204])) return;
 
@@ -80,9 +83,7 @@ api.initOrgId = async function () {
 
 //** retrieves tickets, if no assigneeId is passed returns all tickets */
 api.getTickets = async function (pagination, assigneeId) {
-  if (!_orgId) {
-    await api.initOrgId();
-  }
+  await api.initOrgId();
 
   let url = '/tickets?include=contacts,assignee,departments,team,isRead&status=open';
 
