@@ -21,7 +21,7 @@ module.exports = async (activity) => {
       case "submit":
         const form = _action.form;
         api.initialize(activity);
-        api.initOrgId();
+        await api.initOrgId();
         var response = await api.post('/tickets ', {
           body: {
             "subject": form.subject,
@@ -32,7 +32,7 @@ module.exports = async (activity) => {
         });
 
         //cant add field for ticket id because I cant get response since account is suspended
-        var comment = T(activity, "Ticket {0} created.");
+        var comment = T(activity, "Ticket {0} created.",response.body.id);
         data = getObjPath(activity.Request, "Data.model");
         data._action = {
           response: {
@@ -49,17 +49,17 @@ module.exports = async (activity) => {
         api.initialize(activity);
         await api.initOrgId();
 
-        const messagePromises = [];
-        messagePromises.push(api("/departments?isEnabled=true"));
-        messagePromises.push(api("/contacts?include=accounts"));
-        const messagesResponses = await Promise.all(messagePromises);
+        const promises = [];
+        promises.push(api("/departments?isEnabled=true"));
+        promises.push(api("/contacts?include=accounts"));
+        const responses = await Promise.all(promises);
 
-        for (let i = 0; i < messagesResponses.length; i++) {
-          if ($.isErrorResponse(activity, messagesResponses[i])) return;
+        for (let i = 0; i < responses.length; i++) {
+          if ($.isErrorResponse(activity, responses[i])) return;
         }
         
-        const departments = messagesResponses[0];
-        const contacts = messagesResponses[1];
+        const departments = responses[0];
+        const contacts = responses[1];
 
         schema.properties.departments.default = null;
         schema.properties.departments.xvaluelist = [];
