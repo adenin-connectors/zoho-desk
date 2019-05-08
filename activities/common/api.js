@@ -160,7 +160,7 @@ api.filterResponseByDateRange = function (response, dateRange) {
     }
   }
 
-  return items;
+  return { items };
 };
 
 module.exports = api;
