@@ -4,14 +4,40 @@ const api = require('./common/api');
 module.exports = async function (activity) {
   try {
     api.initialize(activity);
-    var pagination = $.pagination(activity);
-    const response = await api.getTickets(pagination);
+    await api.initOrgId();
+    let allTickets = [];
+    let offset = 0;
+    let limit = 99;
+    let url = `/tickets?include=contacts,assignee,departments,team,isRead&from=${offset}&limit=${limit}`;
+    let response = await api(url);
     if ($.isErrorResponse(activity, response, [200, 204])) return;
+    allTickets.push(...response.body.data);
+
+    let hasMore = false;
+    if (response.body.data.length == limit) {
+      hasMore = true;
+    }
+
+    while (hasMore) {
+      offset += limit;
+      url = `/tickets?include=contacts,assignee,departments,team,isRead&from=${offset}&limit=${limit}`;
+      let response = await api(url);
+      if ($.isErrorResponse(activity, response)) return;
+      allTickets.push(...response.body.data);
+      if (response.body.data.length != limit) {
+        hasMore = false;
+      }
+    }
 
     var dateRange = $.dateRange(activity, "today");
-    activity.Response.Data.items = api.filterResponseByDateRange(response, dateRange);
-    let value = activity.Response.Data.items.items.length;
-    activity.Response.Data.title = T(activity, 'Open Tickets');
+    let tickets = api.filterResponseByDateRange(allTickets, dateRange);
+    let value = tickets.length;
+
+    var pagination = $.pagination(activity);
+    tickets = api.paginateItems(tickets, pagination);
+
+    activity.Response.Data.items = tickets;
+    activity.Response.Data.title = T(activity, 'All Tickets');
     activity.Response.Data.link = `https://desk.zoho.com/support/${activity.Context.connector.custom1}/ShowHomePage.do#Cases`;
     activity.Response.Data.linkLabel = T(activity, 'All Tickets');
     activity.Response.Data.actionable = value > 0;

@@ -133,20 +133,17 @@ api.convertResponse = function (response) {
 };
 
 //**filters response based on provided dateRange */
-api.filterResponseByDateRange = function (response, dateRange) {
-  let items = [];
-  let data = [];
-  if (response.body.data) {
-    data = response.body.data;
-  }
+api.filterResponseByDateRange = function (items, dateRange) {
+  let filteredItems = [];
+
   let timeMin = new Date(dateRange.startDate).valueOf();
   let timeMax = new Date(dateRange.endDate).valueOf();
 
-  for (let i = 0; i < data.length; i++) {
-    let createTime = new Date(data[i].createdTime).valueOf();
+  for (let i = 0; i < items.length; i++) {
+    let createTime = new Date(items[i].createdTime).valueOf();
 
     if (createTime > timeMin && createTime < timeMax) {
-      let raw = data[i];
+      let raw = items[i];
       let item = {
         id: raw.id,
         title: raw.subject,
@@ -156,11 +153,28 @@ api.filterResponseByDateRange = function (response, dateRange) {
         raw: raw
       };
 
-      items.push(item);
+      filteredItems.push(item);
     }
   }
 
-  return { items };
+  return filteredItems;
+};
+
+//** paginate items[] based on provided pagination */
+api.paginateItems = function (items, pagination) {
+  let pagiantedItems = [];
+  const pageSize = parseInt(pagination.pageSize);
+  const offset = (parseInt(pagination.page) - 1) * pageSize;
+
+  if (offset > items.length) return pagiantedItems;
+
+  for (let i = offset; i < offset + pageSize; i++) {
+    if (i >= items.length) {
+      break;
+    }
+    pagiantedItems.push(items[i]);
+  }
+  return pagiantedItems;
 };
 
 module.exports = api;
