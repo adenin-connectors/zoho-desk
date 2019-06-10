@@ -1,7 +1,0 @@
-InterfaceName: items
-Description: Search Tickets
-APIDoc: ''
-Interfaces: 'search,pagination,daterange'
-RequiredScopes: ''
-AdditionalParameters:
-Method: ''
