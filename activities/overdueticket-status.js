@@ -4,7 +4,7 @@ const api = require('./common/api');
 module.exports = async (activity) => {
   try {
     api.initialize(activity);
-    let dateRange = $.dateRange(activity,"today");
+    let dateRange = $.dateRange(activity);
     let endDate = new Date(dateRange.startDate);
     await api.initOrgId();
 

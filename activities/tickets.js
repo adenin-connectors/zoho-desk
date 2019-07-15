@@ -29,7 +29,7 @@ module.exports = async function (activity) {
       }
     }
 
-    var dateRange = $.dateRange(activity, "today");
+    var dateRange = $.dateRange(activity);
     let tickets = api.filterResponseByDateRange(allTickets, dateRange);
     let value = tickets.length;
 
