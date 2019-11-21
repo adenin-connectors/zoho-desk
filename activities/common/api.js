@@ -1,4 +1,5 @@
 'use strict';
+
 const got = require('got');
 const HttpAgent = require('agentkeepalive');
 const HttpsAgent = HttpAgent.HttpsAgent;
@@ -60,16 +61,16 @@ api.stream = (url, opts) => api(url, Object.assign({}, opts, {
 
 for (const x of helpers) {
   const method = x.toUpperCase();
-  api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
-  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
+  api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
+  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
 }
 
 //** sends request to the api to get zoho organizations */
 api.initOrgId = async function () {
-  if (_orgId) {
-    return;
-  }
+  if (_orgId) return;
+
   const userOrg = await api('/organizations');
+
   if ($.isErrorResponse(_activity, userOrg, [200, 204])) return;
 
   const orgData = userOrg.body.data;
@@ -88,14 +89,12 @@ api.getTickets = async function (pagination, assigneeId) {
   let url = '/tickets?include=contacts,assignee,departments,team,isRead&status=open';
 
   if (pagination) {
-    const pageSize = parseInt(pagination.pageSize, 10);
+    const pageSize = parseInt(pagination.pageSize);
     const offset = (parseInt(pagination.page) - 1) * pageSize;
     url += `&from=${offset}&limit=${pageSize}`;
   }
 
-  if (assigneeId) {
-    url += `&assignee=${assigneeId}`;
-  }
+  if (assigneeId) url += `&assignee=${assigneeId}`;
 
   return api(url);
 };
@@ -110,15 +109,15 @@ api.getCurrentUserId = async function () {
 
 //**maps response data to items */
 api.convertResponse = function (response) {
-  let items = [];
+  const items = [];
   let data = [];
-  if (response.body.data) {
-    data = response.body.data;
-  }
+
+  if (response.body.data) data = response.body.data;
 
   for (let i = 0; i < data.length; i++) {
-    let raw = data[i];
-    let item = {
+    const raw = data[i];
+
+    const item = {
       id: raw.id,
       title: raw.subject,
       description: raw.status,
@@ -126,25 +125,27 @@ api.convertResponse = function (response) {
       link: raw.webUrl,
       raw: raw
     };
+
     items.push(item);
   }
 
-  return { items };
+  return {items};
 };
 
 //**filters response based on provided dateRange */
 api.filterResponseByDateRange = function (items, dateRange) {
-  let filteredItems = [];
+  const filteredItems = [];
 
-  let timeMin = new Date(dateRange.startDate).valueOf();
-  let timeMax = new Date(dateRange.endDate).valueOf();
+  const timeMin = new Date(dateRange.startDate).valueOf();
+  const timeMax = new Date(dateRange.endDate).valueOf();
 
   for (let i = 0; i < items.length; i++) {
-    let createTime = new Date(items[i].createdTime).valueOf();
+    const createTime = new Date(items[i].createdTime).valueOf();
 
     if (createTime > timeMin && createTime < timeMax) {
-      let raw = items[i];
-      let item = {
+      const raw = items[i];
+
+      const item = {
         id: raw.id,
         title: raw.subject,
         description: raw.status,
@@ -162,19 +163,19 @@ api.filterResponseByDateRange = function (items, dateRange) {
 
 //** paginate items[] based on provided pagination */
 api.paginateItems = function (items, pagination) {
-  let pagiantedItems = [];
+  const paginatedItems = [];
   const pageSize = parseInt(pagination.pageSize);
   const offset = (parseInt(pagination.page) - 1) * pageSize;
 
-  if (offset > items.length) return pagiantedItems;
+  if (offset > items.length) return paginatedItems;
 
   for (let i = offset; i < offset + pageSize; i++) {
-    if (i >= items.length) {
-      break;
-    }
-    pagiantedItems.push(items[i]);
+    if (i >= items.length) break;
+
+    paginatedItems.push(items[i]);
   }
-  return pagiantedItems;
+
+  return paginatedItems;
 };
 
 module.exports = api;
