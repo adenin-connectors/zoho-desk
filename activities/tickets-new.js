@@ -44,27 +44,31 @@ module.exports = async function (activity) {
 
     const dateRange = $.dateRange(activity);
 
-    const tickets = api.filterResponseByDateRange(allTickets, dateRange);
-
-    let items = [];
+    let tickets = api.filterResponseByDateRange(allTickets, dateRange);
     let count = 0;
     let readDate = (new Date(new Date().setDate(new Date().getDate() - 30))).toISOString(); // default read date 30 days in the past
 
     if (activity.Request.Query.readDate) readDate = activity.Request.Query.readDate;
 
-    for (let i = 0; i < tickets.length; i++) {
-      if (!tickets[i].raw.isRead) {
-        items.push(tickets[i]);
+    let hasUnread = false;
 
-        if (tickets[i].date > readDate) count++;
+    for (let i = tickets.length - 1; i >= 0; i--) {
+      if (tickets[i].raw.isRead && !hasUnread) {
+        readDate = tickets[i].date;
+      } else if (!tickets[i].raw.isRead) {
+        hasUnread = true;
       }
+    }
+
+    for (let i = 0; i < tickets.length; i++) {
+      if (tickets[i].date > readDate) count++;
     }
 
     const pagination = $.pagination(activity);
 
-    items = api.paginateItems(items, pagination);
+    tickets = api.paginateItems(tickets, pagination);
 
-    activity.Response.Data.items = items;
+    activity.Response.Data.items = tickets;
 
     if (parseInt(pagination.page) === 1) {
       activity.Response.Data.title = T(activity, 'New Tickets');
@@ -74,7 +78,7 @@ module.exports = async function (activity) {
 
       if (count > 0) {
         activity.Response.Data.value = count;
-        activity.Response.Data.date = items[0].date;
+        activity.Response.Data.date = tickets[0].date;
         activity.Response.Data.color = 'blue';
         activity.Response.Data.description = count > 1 ? T(activity, 'You have {0} new tickets.', count) : T(activity, 'You have 1 new ticket.');
       } else {
