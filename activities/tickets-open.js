@@ -57,14 +57,15 @@ module.exports = async function (activity) {
     if (parseInt(pagination.page) === 1) {
       activity.Response.Data.title = T(activity, 'Open Tickets');
       activity.Response.Data.link = `https://desk.zoho.com/support/${activity.Context.connector.custom1}/ShowHomePage.do#Cases`;
+      activity.Response.Data.thumbnail = 'https://www.adenin.com/assets/images/wp-images/logo/zoho-desk.svg';
       activity.Response.Data.linkLabel = T(activity, 'All Tickets');
       activity.Response.Data.actionable = value > 0;
 
       if (value > 0) {
         activity.Response.Data.value = value;
         activity.Response.Data.date = tickets[0].date;
-        activity.Response.Data.color = 'blue';
         activity.Response.Data.description = value > 1 ? T(activity, 'You have {0} open tickets.', value) : T(activity, 'You have 1 open ticket.');
+        activity.Response.Data.briefing = activity.Response.Data.description + ' The latest is <b>' + tickets[0].title + '</b>';
       } else {
         activity.Response.Data.description = T(activity, 'You have no open tickets.');
       }
