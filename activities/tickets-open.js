@@ -1,4 +1,5 @@
 'use strict';
+
 const api = require('./common/api');
 
 module.exports = async function (activity) {
@@ -63,9 +64,9 @@ module.exports = async function (activity) {
         activity.Response.Data.value = value;
         activity.Response.Data.date = tickets[0].date;
         activity.Response.Data.color = 'blue';
-        activity.Response.Data.description = value > 1 ? T(activity, 'You have {0} tickets.', value) : T(activity, 'You have 1 ticket.');
+        activity.Response.Data.description = value > 1 ? T(activity, 'You have {0} open tickets.', value) : T(activity, 'You have 1 open ticket.');
       } else {
-        activity.Response.Data.description = T(activity, 'You have no tickets.');
+        activity.Response.Data.description = T(activity, 'You have no open tickets.');
       }
     }
   } catch (error) {

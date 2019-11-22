@@ -71,11 +71,17 @@ api.initOrgId = async function () {
 
   const userOrg = await api('/organizations');
 
-  if ($.isErrorResponse(_activity, userOrg, [200, 204])) return;
+  logger.info(`userOrg response was ${userOrg.statusCode}`);
+
+  if ($.isErrorResponse(_activity, userOrg, [200, 204])) {
+    logger.error('userOrg request was error response (not status 200 or 204)');
+    return;
+  }
 
   const orgData = userOrg.body.data;
 
   if (orgData.length !== 1) {
+    logger.error('userOrg returned > 1 result');
     throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
   } else {
     _orgId = orgData[0].id;

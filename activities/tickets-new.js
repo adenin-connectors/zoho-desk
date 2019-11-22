@@ -1,4 +1,5 @@
 'use strict';
+
 const api = require('./common/api');
 
 module.exports = async function (activity) {
