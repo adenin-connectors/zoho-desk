@@ -86,7 +86,8 @@ module.exports = async function (activity) {
         const first = tickets[0];
 
         activity.Response.Data.briefing = `You have a new ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
-        activity.Response.Data.briefing += count > 1 ? `, along with ${count} more new tickets` : ', along with 1 more new ticket';
+
+        if (count > 1) activity.Response.Data.briefing += count > 2 ? `, along with ${count - 1} more new tickets` : ', along with 1 more new ticket';
       } else {
         activity.Response.Data.description = T(activity, 'You have no new tickets.');
       }

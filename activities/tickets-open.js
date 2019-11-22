@@ -69,7 +69,8 @@ module.exports = async function (activity) {
         const first = tickets[0];
 
         activity.Response.Data.briefing = `You have an open ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
-        activity.Response.Data.briefing += value > 1 ? `, along with ${value} more open tickets` : ', along with 1 more open ticket';
+
+        if (value > 1) activity.Response.Data.briefing += value > 2 ? `, along with ${value - 1} more open tickets` : ', along with 1 more open ticket';
       } else {
         activity.Response.Data.description = T(activity, 'You have no open tickets.');
       }
