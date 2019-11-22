@@ -45,7 +45,7 @@ module.exports = async function (activity) {
 
     const dateRange = $.dateRange(activity);
 
-    let tickets = api.filterResponseByDateRange(allTickets, dateRange);
+    let tickets = api.filterResponseByDateRange(allTickets, dateRange, true);
     let count = 0;
     let readDate = (new Date(new Date().setDate(new Date().getDate() - 30))).toISOString(); // default read date 30 days in the past
 
@@ -53,7 +53,7 @@ module.exports = async function (activity) {
 
     let hasUnread = false;
 
-    for (let i = tickets.length - 1; i >= 0; i--) {
+    for (let i = 0; i < tickets.length; i++) {
       if (tickets[i].raw.isRead && !hasUnread) {
         readDate = tickets[i].date;
       } else if (!tickets[i].raw.isRead) {
@@ -82,7 +82,11 @@ module.exports = async function (activity) {
         activity.Response.Data.value = count;
         activity.Response.Data.date = tickets[0].date;
         activity.Response.Data.description = count > 1 ? T(activity, 'You have {0} new tickets.', count) : T(activity, 'You have 1 new ticket.');
-        activity.Response.Data.briefing = activity.Response.Data.description + ' The latest is <b>' + tickets[0].title + '</b>';
+
+        const first = tickets[0];
+
+        activity.Response.Data.briefing = `You have a new ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
+        activity.Response.Data.briefing += count > 1 ? `, along with ${count} more new tickets` : ', along with 1 more new ticket';
       } else {
         activity.Response.Data.description = T(activity, 'You have no new tickets.');
       }

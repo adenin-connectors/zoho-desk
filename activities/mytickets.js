@@ -54,7 +54,7 @@ module.exports = async function (activity) {
         activity.Response.Data.value = value;
         activity.Response.Data.date = tickets[0].date;
         activity.Response.Data.description = value > 1 ? T(activity, "You have {0} tickets assigned.", value)
-          : T(activity, "You have 1 ticket asigned.");
+          : T(activity, "You have 1 ticket assigned.");
         activity.Response.Data.briefing = activity.Response.Data.description + ' The latest is <b>' + tickets[0].title + '</b>';
       } else {
         activity.Response.Data.description = T(activity, `You have no tickets assigned.`);

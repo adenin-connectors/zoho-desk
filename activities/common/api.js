@@ -71,17 +71,11 @@ api.initOrgId = async function () {
 
   const userOrg = await api('/organizations');
 
-  logger.info(`userOrg response was ${userOrg.statusCode}`);
-
-  if ($.isErrorResponse(_activity, userOrg, [200, 204])) {
-    logger.error('userOrg request was error response (not status 200 or 204)');
-    return;
-  }
+  if ($.isErrorResponse(_activity, userOrg, [200, 204])) return;
 
   const orgData = userOrg.body.data;
 
   if (orgData.length !== 1) {
-    logger.error('userOrg returned > 1 result');
     throw Error(`Number of organisations must be exactly 1 and we got ${orgData.length}`);
   } else {
     _orgId = orgData[0].id;
@@ -139,7 +133,7 @@ api.convertResponse = function (response) {
 };
 
 //**filters response based on provided dateRange */
-api.filterResponseByDateRange = function (items, dateRange) {
+api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
   const filteredItems = [];
 
   const timeMin = new Date(dateRange.startDate).valueOf();
@@ -151,10 +145,14 @@ api.filterResponseByDateRange = function (items, dateRange) {
     if (createTime > timeMin && createTime < timeMax) {
       const raw = items[i];
 
+      let description = `${raw.contact.firstName} ${raw.contact.lastName}`;
+
+      if (includeStatus) description += ` - ${raw.status}`;
+
       const item = {
         id: raw.id,
         title: raw.subject,
-        description: raw.status,
+        description: description,
         date: raw.createdTime,
         link: raw.webUrl,
         raw: raw
