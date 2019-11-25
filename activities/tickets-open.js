@@ -73,7 +73,7 @@ module.exports = async function (activity) {
 
           if (value > 1) activity.Response.Data.briefing += value > 2 ? `, along with ${value - 1} more open tickets` : ', along with 1 more open ticket';
         } else {
-          activity.Response.Data.briefing = activity.Response.Data.description + ` the latest is ${first.title}`;
+          activity.Response.Data.briefing = activity.Response.Data.description + ` The latest is <strong>${first.title}</strong>`;
         }
       } else {
         activity.Response.Data.description = T(activity, 'You have no open tickets.');

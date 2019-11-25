@@ -90,7 +90,7 @@ module.exports = async function (activity) {
 
           if (count > 1) activity.Response.Data.briefing += count > 2 ? `, along with ${count - 1} more new tickets` : ', along with 1 more new ticket';
         } else {
-          activity.Response.Data.briefing = activity.Response.Data.description + ` the latest is ${first.title}`;
+          activity.Response.Data.briefing = activity.Response.Data.description + ` The latest is <strong>${first.title}</strong>`;
         }
       } else {
         activity.Response.Data.description = T(activity, 'You have no new tickets.');
