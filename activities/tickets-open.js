@@ -62,15 +62,19 @@ module.exports = async function (activity) {
       activity.Response.Data.actionable = value > 0;
 
       if (value > 0) {
-        activity.Response.Data.value = value;
-        activity.Response.Data.date = tickets[0].date;
-        activity.Response.Data.description = value > 1 ? T(activity, 'You have {0} open tickets.', value) : T(activity, 'You have 1 open ticket.');
-
         const first = tickets[0];
 
-        activity.Response.Data.briefing = `You have an open ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
+        activity.Response.Data.value = value;
+        activity.Response.Data.date = first.date;
+        activity.Response.Data.description = value > 1 ? T(activity, 'You have {0} open tickets.', value) : T(activity, 'You have 1 open ticket.');
 
-        if (value > 1) activity.Response.Data.briefing += value > 2 ? `, along with ${value - 1} more open tickets` : ', along with 1 more open ticket';
+        if (first.raw.contact.account) {
+          activity.Response.Data.briefing = `You have an open ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
+
+          if (value > 1) activity.Response.Data.briefing += value > 2 ? `, along with ${value - 1} more open tickets` : ', along with 1 more open ticket';
+        } else {
+          activity.Response.Data.briefing = activity.Response.Data.description + ` the latest is ${first.title}`;
+        }
       } else {
         activity.Response.Data.description = T(activity, 'You have no open tickets.');
       }

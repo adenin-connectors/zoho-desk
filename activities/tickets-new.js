@@ -79,15 +79,19 @@ module.exports = async function (activity) {
       activity.Response.Data.actionable = count > 0;
 
       if (count > 0) {
-        activity.Response.Data.value = count;
-        activity.Response.Data.date = tickets[0].date;
-        activity.Response.Data.description = count > 1 ? T(activity, 'You have {0} new tickets.', count) : T(activity, 'You have 1 new ticket.');
-
         const first = tickets[0];
 
-        activity.Response.Data.briefing = `You have a new ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
+        activity.Response.Data.value = count;
+        activity.Response.Data.date = first.date;
+        activity.Response.Data.description = count > 1 ? T(activity, 'You have {0} new tickets.', count) : T(activity, 'You have 1 new ticket.');
 
-        if (count > 1) activity.Response.Data.briefing += count > 2 ? `, along with ${count - 1} more new tickets` : ', along with 1 more new ticket';
+        if (first.raw.contact.account) {
+          activity.Response.Data.briefing = `You have a new ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
+
+          if (count > 1) activity.Response.Data.briefing += count > 2 ? `, along with ${count - 1} more new tickets` : ', along with 1 more new ticket';
+        } else {
+          activity.Response.Data.briefing = activity.Response.Data.description + ` the latest is ${first.title}`;
+        }
       } else {
         activity.Response.Data.description = T(activity, 'You have no new tickets.');
       }

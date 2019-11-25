@@ -147,6 +147,7 @@ api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
 
       let description = `${raw.contact.firstName} ${raw.contact.lastName}`;
 
+      if (raw.contact.account) description += ` from ${raw.contact.account.accountName}`;
       if (includeStatus) description += ` - ${raw.status}`;
 
       const item = {
