@@ -85,12 +85,27 @@ module.exports = async function (activity) {
         activity.Response.Data.date = first.date;
         activity.Response.Data.description = count > 1 ? T(activity, 'You have {0} new tickets.', count) : T(activity, 'You have 1 new ticket.');
 
-        if (first.raw.contact.account) {
-          activity.Response.Data.briefing = `You have a new ticket from <strong>${first.raw.contact.account.accountName}</strong>`;
+        let fallbackToDefault = false;
 
-          if (count > 1) activity.Response.Data.briefing += count > 2 ? `, along with ${count - 1} more new tickets` : ', along with 1 more new ticket';
+        // For the briefing message we first try company name, then creator's name, then creator's email, before falling back to default
+        if (first.raw.contact.account) {
+          activity.Response.Data.briefing = `${first.raw.contact.account.accountName}`;
+        } else if (first.raw.contact.firstName && first.raw.contact.lastName) {
+          activity.Response.Data.briefing = `${first.raw.contact.firstName} ${first.raw.contact.firstName}`;
+        } else if (first.raw.contact.email) {
+          activity.Response.Data.briefing = `${first.raw.contact.email}`;
         } else {
+          // default is we append latest ticket name to the existing ticket count message
           activity.Response.Data.briefing = activity.Response.Data.description + ` The latest is <strong>${first.title}</strong>`;
+          fallbackToDefault = true;
+        }
+
+        // if we aren't using default message, we add the rest of the text that is common to briefing message here
+        if (!fallbackToDefault) {
+          activity.Response.Data.briefing += ` has a new ticket for <b>${first.title}</b>`;
+
+          // if there's more than one ticket we add 'and X more', then must check if there's more than two tickets (to decide whether to use plural)
+          if (count > 1) activity.Response.Data.briefing += count > 2 ? `, along with ${count - 1} more new tickets` : ', along with 1 more new ticket';
         }
       } else {
         activity.Response.Data.description = T(activity, 'You have no new tickets.');
