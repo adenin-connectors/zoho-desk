@@ -72,11 +72,11 @@ module.exports = async function (activity) {
 
         // For the briefing message we first try company name, then creator's name, then creator's email, before falling back to default
         if (first.raw.contact.account) {
-          activity.Response.Data.briefing = `${first.raw.contact.account.accountName}`;
+          activity.Response.Data.briefing = first.raw.contact.account.accountName;
         } else if (first.raw.contact.firstName && first.raw.contact.lastName) {
           activity.Response.Data.briefing = `${first.raw.contact.firstName} ${first.raw.contact.firstName}`;
         } else if (first.raw.contact.email) {
-          activity.Response.Data.briefing = `${first.raw.contact.email}`;
+          activity.Response.Data.briefing = first.raw.contact.email;
         } else {
           // default is we append latest ticket name to the existing ticket count message
           activity.Response.Data.briefing = activity.Response.Data.description + ` The latest is <strong>${first.title}</strong>`;
