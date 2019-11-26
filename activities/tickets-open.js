@@ -8,20 +8,15 @@ module.exports = async function (activity) {
 
     await api.initOrgId();
 
-    const promises = [];
     const limit = 99;
 
     let offset = 0;
     let url = `/tickets?include=contacts,assignee,departments,team,isRead&status=open&from=${offset}&limit=${limit}&sortBy=-createdTime`;
 
-    promises.push(api.initOrgId());
-    promises.push(api(url));
+    let response = await api(url);
 
-    const responses = await Promise.all(promises);
+    if ($.isErrorResponse(activity, response, [200, 204])) return;
 
-    if ($.isErrorResponse(activity, responses[1], [200, 204])) return;
-
-    const response = responses[1];
     const allTickets = [];
 
     allTickets.push(...response.body.data);
@@ -34,7 +29,7 @@ module.exports = async function (activity) {
       offset += limit;
       url = `/tickets?include=contacts,assignee,departments,team,isRead&status=open&from=${offset}&limit=${limit}&sortBy=-createdTime`;
 
-      const response = await api(url);
+      response = await api(url);
 
       if ($.isErrorResponse(activity, response)) return;
 
