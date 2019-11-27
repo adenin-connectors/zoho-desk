@@ -145,8 +145,10 @@ api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
     if (createTime > timeMin && createTime < timeMax) {
       const raw = items[i];
 
-      let description = `${raw.contact.firstName} ${raw.contact.lastName}`;
+      let description;
 
+      if (raw.contact.firstName) description += raw.contact.firstName;
+      if (raw.contact.lastName) description += raw.contact.firstName ? ` ${raw.contact.lastName}` : raw.contact.lastName;
       if (raw.contact.account) description += ` from ${raw.contact.account.accountName}`;
       if (includeStatus) description += ` - ${raw.status}`;
 
