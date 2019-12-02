@@ -1,5 +1,7 @@
 'use strict';
 
+const crypto = require('crypto');
+
 const got = require('got');
 const HttpAgent = require('agentkeepalive');
 const HttpsAgent = HttpAgent.HttpsAgent;
@@ -158,6 +160,7 @@ api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
         description: description,
         date: raw.createdTime,
         link: raw.webUrl,
+        thumbnail: getGravatarUrl(raw.contact.email),
         raw: raw
       };
 
@@ -186,3 +189,19 @@ api.paginateItems = function (items, pagination) {
 };
 
 module.exports = api;
+
+function getGravatarUrl(email) {
+  const gravatarBaseUrl = 'https://www.gravatar.com/avatar/';
+  const md5 = crypto.createHash('md5');
+
+  if (!email || !(typeof email === 'string') || !(email instanceof String)) {
+    md5.update('');
+    return `${gravatarBaseUrl}${md5.digest('hex')}?s=100&d=mp&f=y`;
+  }
+
+  email = email.toLowerCase().trim();
+
+  const hash = md5.update(email).digest('hex');
+
+  return `${gravatarBaseUrl}${hash}?s=100&d=mp`;
+}
