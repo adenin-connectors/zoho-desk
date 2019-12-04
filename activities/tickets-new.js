@@ -57,7 +57,10 @@ module.exports = async function (activity) {
     }
 
     for (let i = 0; i < tickets.length; i++) {
-      if (tickets[i].date > readDate) count++;
+      if (tickets[i].date > readDate) {
+        tickets[i].isNew = true;
+        count++;
+      }
     }
 
     const pagination = $.pagination(activity);

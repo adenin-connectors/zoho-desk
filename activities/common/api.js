@@ -159,7 +159,6 @@ api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
       }
 
       if (raw.contact.account) description += description ? ` from ${raw.contact.account.accountName}` : raw.contact.account.accountName;
-      if (includeStatus && raw.status) description += description ? ` - ${raw.status}` : raw.status;
 
       const item = {
         id: raw.id,
@@ -168,8 +167,11 @@ api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
         date: raw.createdTime,
         link: raw.webUrl,
         thumbnail: $.avatarLink(name, raw.contact.email),
+        imageIsAvatar: true,
         raw: raw
       };
+
+      if (includeStatus && raw.status) item.statusText = raw.status;
 
       filteredItems.push(item);
     }
