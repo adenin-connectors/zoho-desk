@@ -168,7 +168,7 @@ api.filterResponseByDateRange = function (items, dateRange, includeStatus) {
         link: raw.webUrl,
         thumbnail: $.avatarLink(name, raw.contact.email),
         imageIsAvatar: true,
-        raw: raw
+        contact: raw.contact
       };
 
       if (includeStatus && raw.status) item.statusText = raw.status;
