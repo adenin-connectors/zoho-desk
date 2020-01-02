@@ -90,7 +90,7 @@ module.exports = async function (activity) {
         if (first.contact.account) {
           activity.Response.Data.briefing = first.contact.account.accountName;
         } else if (first.contact.firstName && first.contact.lastName) {
-          activity.Response.Data.briefing = `${first.contact.firstName} ${first.contact.firstName}`;
+          activity.Response.Data.briefing = `${first.contact.firstName} ${first.contact.lastName}`;
         } else if (first.contact.email) {
           activity.Response.Data.briefing = first.contact.email;
         } else {
