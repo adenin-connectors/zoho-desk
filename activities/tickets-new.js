@@ -50,9 +50,9 @@ module.exports = async function (activity) {
     let hasUnread = false;
 
     for (let i = 0; i < tickets.length; i++) {
-      if (tickets[i].raw.isRead && !hasUnread) {
+      if (tickets[i].isRead && !hasUnread) {
         readDate = tickets[i].date;
-      } else if (!tickets[i].raw.isRead) {
+      } else if (!tickets[i].isRead) {
         hasUnread = true;
       }
     }
