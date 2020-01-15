@@ -9,11 +9,9 @@ module.exports = async function (activity) {
 
     if ($.isErrorResponse(activity, response, [200, 204])) return;
 
-    let userDesk = activity.Context.connector.custom1;
-
     activity.Response.Data.items = filterUnassignedTickets(response);
     activity.Response.Data.title = T(activity, 'Unassigned Tickets');
-    activity.Response.Data.link = `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`;
+    activity.Response.Data.link = `${api.getInstanceDomain()}/ShowHomePage.do#Cases`;
     activity.Response.Data.linkLabel = T(activity, 'All Tickets');
   } catch (error) {
     $.handleError(activity, error);

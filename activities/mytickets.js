@@ -45,7 +45,7 @@ module.exports = async function (activity) {
     activity.Response.Data.items = tickets;
     if (parseInt(pagination.page) == 1) {
       activity.Response.Data.title = T(activity, 'My Open Tickets');
-      activity.Response.Data.link = `https://desk.zoho.com/support/${activity.Context.connector.custom1}/ShowHomePage.do#Cases`;
+      activity.Response.Data.link = `${api.getInstanceDomain()}/ShowHomePage.do#Cases`;
       activity.Response.Data.thumbnail = 'https://www.adenin.com/assets/images/wp-images/logo/zoho-desk.svg';
       activity.Response.Data.linkLabel = T(activity, 'All Tickets');
       activity.Response.Data.actionable = value > 0;

@@ -15,10 +15,9 @@ module.exports = async (activity) => {
 
     if ($.isErrorResponse(activity,response, [200, 204])) return;
 
-    let userDesk = activity.Context.connector.custom1;
     let status = {
       title: T(activity,'Overdue Tickets'),
-      link: `https://desk.zoho.com/support/${userDesk}/ShowHomePage.do#Cases`,
+      link: `${api.getInstanceDomain()}/ShowHomePage.do#Cases`,
       linkLabel: T(activity,'All Tickets')
     };
 

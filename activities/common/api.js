@@ -198,4 +198,17 @@ api.paginateItems = function (items, pagination) {
   return paginatedItems;
 };
 
+api.getInstanceDomain = () => {
+  const custom1 = _activity.Context.connector.custom1;
+
+  // if it doesn't contain 'support' we must assume it's just the instance name, return default domain
+  if (custom1.indexOf('support') < 0) return `https://desk.zoho.com/support/${custom1}`;
+
+  // if it contains http protocol and has /support/, it must be full domain - return
+  if (/^(http|https)\:\/\/?/.test(custom1)) return custom1;
+
+  // else we must just assume it's the full domain without protocol - prepend with https://
+  return `https://${custom1}`;
+};
+
 module.exports = api;

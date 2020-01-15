@@ -42,7 +42,7 @@ module.exports = async (activity) => {
 
     activity.Response.Data.chart = chartDefinition;
     activity.Response.Data.title = T(activity, 'Open Tickets by Priority');
-    activity.Response.Data.link = `https://desk.zoho.com/support/${activity.Context.connector.custom1}/ShowHomePage.do#Cases`;
+    activity.Response.Data.link = `${api.getInstanceDomain()}/ShowHomePage.do#Cases`;
     activity.Response.Data.linkLabel = T(activity, 'All Tickets');
   } catch (error) {
     $.handleError(activity, error);
