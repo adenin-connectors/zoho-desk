@@ -201,6 +201,8 @@ api.paginateItems = function (items, pagination) {
 api.getInstanceDomain = () => {
   const custom1 = _activity.Context.connector.custom1;
 
+  if (!custom1) return 'https://desk.zoho.com/support';
+
   // if it doesn't contain 'support' we must assume it's just the instance name, return default domain
   if (custom1.indexOf('support') < 0) return `https://desk.zoho.com/support/${custom1}`;
 
